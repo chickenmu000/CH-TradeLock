@@ -1,0 +1,19 @@
+name: CH-TradeLock
+version: '1.4'
+main: com.ch.tradelock.CHTradeLock
+api-version: '1.21'
+description: 로어에 "거래불가"가 포함된 아이템의 드롭·이동·AxTrade 거래 차단 + 사망 시 보호
+
+softdepend:
+  - AxTrade
+
+commands:
+  tradelock:
+    description: CH-TradeLock 관리 명령어
+    usage: /tradelock reload
+    permission: chtradelock.admin
+
+permissions:
+  chtradelock.admin:
+    description: CH-TradeLock 관리자 권한
+    default: op
