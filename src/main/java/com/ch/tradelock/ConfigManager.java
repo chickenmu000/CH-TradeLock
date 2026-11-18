@@ -14,6 +14,7 @@ public class ConfigManager {
     private Set<String> blockedCommands;
     private Set<String> protectedWorlds;
     private boolean consumeTicket;
+    private double beginnerHours;
 
     public ConfigManager(CHTradeLock plugin) {
         this.plugin = plugin;
@@ -29,6 +30,7 @@ public class ConfigManager {
                 .collect(Collectors.toSet());
         protectedWorlds = new HashSet<>(plugin.getConfig().getStringList("death-protection.protected-worlds"));
         consumeTicket = plugin.getConfig().getBoolean("death-protection.consume-ticket", true);
+        beginnerHours = plugin.getConfig().getDouble("death-protection.beginner-luck-hours", 3);
     }
 
     public List<String> getWhitelistedGuis() {
@@ -41,6 +43,10 @@ public class ConfigManager {
 
     public Set<String> getProtectedWorlds() {
         return protectedWorlds;
+    }
+
+    public double getBeginnerHours() {
+        return beginnerHours;
     }
 
     public boolean isConsumeTicket() {

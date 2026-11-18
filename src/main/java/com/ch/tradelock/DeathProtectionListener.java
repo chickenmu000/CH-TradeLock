@@ -1,6 +1,7 @@
 package com.ch.tradelock;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,13 +15,15 @@ import java.util.Iterator;
 /**
  * 사망 처리 (한 곳에서 순서대로 처리해서 아이템 복사/손실이 생기지 않게 함)
  *  1) 보호 월드에서 사망      -> 인벤토리 / 경험치 유지
- *  2) 인벤세이브권 소지 사망   -> 인벤토리 / 경험치 유지 (+ 티켓 1개 소모)
- *  3) 그 외                  -> 거래불가 아이템만 보호 (리스폰 후 돌려받음)
+ *  2) 초심자의 행운(총 플레이 시간 미만) -> 인벤토리 / 경험치 유지 (티켓 소모 없음)
+ *  3) 인벤세이브권 소지 사망   -> 인벤토리 / 경험치 유지 (+ 티켓 1개 소모)
+ *  4) 그 외                  -> 거래불가 아이템만 보호 (리스폰 후 돌려받음)
  */
 public class DeathProtectionListener implements Listener {
 
     private static final Component MSG_WORLD = Component.text(
             "§a[월드 보호] 지정된 보호 월드에서 사망하여 아이템과 경험치가 안전하게 유지되었습니다.");
+    private static final String MSG_BEGINNER = "§a[초심자의 행운] 아이템과 경험치를 잃지 않았습니다! §7(남은 시간 약 %d분)";
     private static final Component MSG_TICKET_USED = Component.text(
             "§a[인벤세이브권] 인벤세이브권 1개를 사용하여 아이템과 경험치를 보호했습니다.");
     private static final Component MSG_TICKET_EFFECT = Component.text(
@@ -47,7 +50,20 @@ public class DeathProtectionListener implements Listener {
             return;
         }
 
-        // 2) 인벤세이브권
+        // 2) 초심자의 행운 (총 플레이 시간이 설정 시간 미만)
+        double hours = cfg.getBeginnerHours();
+        if (hours > 0) {
+            long playedTicks = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
+            long limitTicks = (long) (hours * 72000L);
+            if (playedTicks < limitTicks) {
+                protect(event);
+                long leftMin = (limitTicks - playedTicks) / 1200L;
+                player.sendMessage(Component.text(String.format(MSG_BEGINNER, leftMin)));
+                return;
+            }
+        }
+
+        // 3) 인벤세이브권
         ItemStack ticket = cfg.getTicketItem();
         if (ticket != null) {
             PlayerInventory inv = player.getInventory();
@@ -64,7 +80,7 @@ public class DeathProtectionListener implements Listener {
             }
         }
 
-        // 3) 거래불가 아이템은 사망해도 떨어지지 않고, 리스폰 후 인벤토리로 돌아온다.
+        // 4) 거래불가 아이템은 사망해도 떨어지지 않고, 리스폰 후 인벤토리로 돌아온다.
         Iterator<ItemStack> it = event.getDrops().iterator();
         while (it.hasNext()) {
             ItemStack drop = it.next();

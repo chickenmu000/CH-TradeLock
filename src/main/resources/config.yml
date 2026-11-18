@@ -28,6 +28,8 @@ death-protection:
     - "dun"
     - "tuto"
     - "boss"
+  # 초심자의 행운 : 총 플레이 시간이 이 시간(시간 단위) 미만이면 죽어도 인벤토리/경험치 유지 (0 = 끔)
+  beginner-luck-hours: 3
   # true : 인벤세이브권 사용 시 1개 소모 / false : 가지고만 있으면 계속 보호
   consume-ticket: true
   # 인벤세이브권 아이템 - /invsave set 으로 손에 든 아이템을 저장하세요 (직접 수정하지 마세요)
