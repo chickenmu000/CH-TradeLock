@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -20,7 +19,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class TradeLockListener implements Listener {
@@ -38,7 +36,7 @@ public class TradeLockListener implements Listener {
         this.plugin = plugin;
     }
 
-    boolean isLackItem(ItemStack item) {
+    static boolean isLackItem(ItemStack item) {
         if (item == null || item.getType().isAir()) return false;
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return false;
@@ -66,21 +64,7 @@ public class TradeLockListener implements Listener {
         return false;
     }
 
-    // ---------------- 사망 시 보호 ----------------
-    // 거래불가 아이템은 사망해도 떨어지지 않고, 리스폰 후 인벤토리로 돌아온다.
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onDeath(PlayerDeathEvent event) {
-        // 인벤토리 유지(keepInventory) 중이면 아이템은 이미 인벤토리에 남으므로 건드리지 않음 (복사 방지)
-        if (event.getKeepInventory()) return;
-        Iterator<ItemStack> it = event.getDrops().iterator();
-        while (it.hasNext()) {
-            ItemStack drop = it.next();
-            if (isLackItem(drop)) {
-                it.remove();
-                event.getItemsToKeep().add(drop);
-            }
-        }
-    }
+    // 사망 시 보호는 DeathProtectionListener 에서 처리합니다.
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {

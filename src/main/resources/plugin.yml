@@ -1,8 +1,8 @@
 name: CH-TradeLock
-version: '1.4.1'
+version: '1.5.0'
 main: com.ch.tradelock.CHTradeLock
 api-version: '1.21'
-description: 로어에 "거래불가"가 포함된 아이템의 드롭·이동·AxTrade 거래 차단 + 사망 시 보호
+description: 로어에 "거래불가"가 포함된 아이템의 드롭·이동·AxTrade 거래 차단 + 사망 시 보호 + 인벤세이브권/보호 월드
 
 softdepend:
   - AxTrade
@@ -11,6 +11,11 @@ commands:
   tradelock:
     description: CH-TradeLock 관리 명령어
     usage: /tradelock reload
+    permission: chtradelock.admin
+  invsave:
+    description: 인벤세이브권 관리 (set / clear / give)
+    aliases: [인벤세이브권]
+    usage: /invsave <set|clear|give [수량]>
     permission: chtradelock.admin
 
 permissions:
