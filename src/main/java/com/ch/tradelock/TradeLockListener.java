@@ -70,6 +70,8 @@ public class TradeLockListener implements Listener {
     // 거래불가 아이템은 사망해도 떨어지지 않고, 리스폰 후 인벤토리로 돌아온다.
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent event) {
+        // 인벤토리 유지(keepInventory) 중이면 아이템은 이미 인벤토리에 남으므로 건드리지 않음 (복사 방지)
+        if (event.getKeepInventory()) return;
         Iterator<ItemStack> it = event.getDrops().iterator();
         while (it.hasNext()) {
             ItemStack drop = it.next();
